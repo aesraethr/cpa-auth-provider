@@ -17,11 +17,11 @@ var routes = function(app) {
       where: { user_id: req.user.id, state: 'pending' },
       include: [ db.User, db.Domain ]
     })
-    .complete(function(err, pairingCodes) {
-      if (err) {
+    .catch(function(err, pairingCodes) {
+
         res.send(500);
         return;
-      }
+      }).then(function(){
 
       if (pairingCodes.length > 0) {
         res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
@@ -49,11 +49,11 @@ var routes = function(app) {
     if (userCode && redirectUri) {
       db.PairingCode
         .find({ where: { 'user_code': userCode }, include: [ db.Client, db.Domain ] })
-        .complete(function(err, pairingCode) {
-          if (err) {
+        .catch(function(err, pairingCode) {
+
             res.send(500);
             return;
-          }
+          }).then(function(){
 
           if (!pairingCode) {
             renderVerificationPage(req, res, messages.INVALID_USERCODE);
@@ -102,11 +102,11 @@ var routes = function(app) {
       db.PairingCode.find({
         where: { id: code.id, user_id: userId, state: 'pending' },
         include: [ db.User, db.Domain ]
-      }).complete(function(err, pairingCode) {
-        if (err) {
+      }).catch(function(err, pairingCode) {
+
           callback(err);
           return;
-        }
+        }).then(function(){
 
         if (!pairingCode) {
           callback(new Error('PairingCode with id: ' + code.id + ' not found'));
@@ -119,7 +119,7 @@ var routes = function(app) {
         }
         else {
           pairingCode.state = (code.value === 'yes') ? 'verified' : 'denied';
-          pairingCode.save(['state']).complete(callback);
+          pairingCode.save(['state']).catch(function(){callback});
         }
       });
     },
@@ -146,11 +146,11 @@ var routes = function(app) {
   var denyUserCode = function(userCode, userId, done) {
     db.PairingCode
       .find({where: {'user_code': userCode}, include: [db.Client]})
-      .complete(function (err, pairingCode) {
-        if (err) {
+      .catch(function (err, pairingCode) {
+
           done(err);
           return;
-        }
+        }).then(function(){
 
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');
@@ -196,11 +196,11 @@ var routes = function(app) {
   var associateUserCodeWithUser = function(userCode, userId, done) {
     db.PairingCode
       .find({ where: { 'user_code': userCode }, include: [ db.Client ] })
-      .complete(function(err, pairingCode) {
-        if (err) {
+      .catch(function(err, pairingCode) {
+
           done(err);
           return;
-        }
+        }).then(function(){
 
         if (!pairingCode) {
           done(null, messages.INVALID_USERCODE, 'cancelled');

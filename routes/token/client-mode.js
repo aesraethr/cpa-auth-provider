@@ -49,18 +49,17 @@ module.exports = function(req, res, next) {
         where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
         include: [ db.User ]
       })
-      .complete(function(err, client) {
-        if (!client) {
+      .catch(function(err, client) {
           res.sendInvalidClient("Unknown client: " + clientId);
           return;
-        }
+        }).then(function(){
         callback(err, client);
       });
     };
 
     var findDomain = function(client, callback) {
       db.Domain.find({ where: { name: domainName }})
-        .complete(function(err, domain) {
+        .catch(function(err, domain) {
           if (!domain) {
             // SPEC : define correct error message
             res.sendInvalidRequest("Unknown domain: " + domainName);
@@ -98,7 +97,7 @@ module.exports = function(req, res, next) {
           client_id: client.id,
           domain_id: domain.id
         })
-        .complete(function(err, accessToken) {
+        .catch(function(err, accessToken) {
           callback(err, client, domain, accessToken);
         });
     };

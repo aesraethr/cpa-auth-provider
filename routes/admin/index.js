@@ -14,11 +14,11 @@ module.exports = function(app) {
 
   app.get('/admin/domains', authHelper.authenticateFirst, function(req, res) {
     db.Domain.findAll()
-      .complete(function(err, domains) {
-        if (err) {
+      .catch(function(err, domains) {
+
           res.send(500);
           return;
-        }
+        }).then(function(){
 
         res.render('./admin/domains.ejs', { domains: domains });
       });
@@ -36,12 +36,12 @@ module.exports = function(app) {
     };
 
     db.Domain.create(domain)
-      .complete(function(err, domain) {
-        if (err) {
+      .catch(function(err, domain) {
+
           // TODO: Report validation errors to the user.
           res.render('./admin/add_domain.ejs');
           return;
-        }
+        }).then(function(){
 
         requestHelper.redirect(res, '/admin/domains');
       });

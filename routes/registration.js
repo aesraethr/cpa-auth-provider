@@ -63,12 +63,12 @@ module.exports = function(app) {
             software_version: req.body.software_version,
             ip:               clientIp
           })
-          .complete(function(err, client) {
+          .catch(function(err, client) {
             callback(err, client);
           });
         },
         function(client, callback) {
-          transaction.commit().complete(function(err) {
+          transaction.commit().catch(function(err) {
             callback(err, client);
           });
         },
@@ -82,20 +82,19 @@ module.exports = function(app) {
         }
       ],
       function(error) {
+
         if (error) {
-          transaction.rollback().complete(function(err) {
-            if (err) {
+          transaction.rollback().catch(function(err) {
+
               next(err);
-            }
-            else {
+            }).then(function(){
               // TODO: distinguish between invalid input parameters and other
               // failure conditions
 
               // TODO: report more specific error message, e.g, which field
               // is invalid.
               res.sendInvalidRequest("Invalid request");
-            }
-          });
+            });
         }
       });
     });

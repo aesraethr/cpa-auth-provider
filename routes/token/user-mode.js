@@ -56,11 +56,10 @@ module.exports = function(req, res, next) {
           where:   { id: clientId, secret: clientSecret },
           include: [ db.User ]
         })
-        .complete(function(err, client) {
-          if (err) {
+        .catch(function(err, client) {
             callback(err);
             return;
-          }
+          }).then(function(){
 
           if (!client) {
             res.sendInvalidClient("Unknown client: " + clientId);
@@ -76,13 +75,13 @@ module.exports = function(req, res, next) {
           where:   { client_id: client.id, device_code: deviceCode },
           include: [ db.Domain, db.User, db.Client ]
         })
-        .complete(function(err, pairingCode) {
-          if (err) {
+        .catch(function(err, pairingCode) {
+
             callback(err);
             return;
-          }
+          }).then(function(){
 
-          if (!pairingCode) {
+            if (!pairingCode) {
             res.sendInvalidRequest("Pairing code not found");
             return;
           }
