@@ -13,7 +13,9 @@ var config = require('../../config');
 before(function(done) {
   requestHelper.urlPrefix = config.urlPrefix;
 
-  db.sequelize.sync({ force: true }).catch(function(err) {
+  db.sequelize.sync({ force: true }).then(function(){
+
+  }).catch(function(err) {
     done(err);
   });
 });
