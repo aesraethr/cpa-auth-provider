@@ -39,6 +39,43 @@ Edit `config.local.js` to set the necessary configuration options:
 * Service provider domain names and access tokens
 
 ## Initialise the database
+If you didn't do it, don't forget to install dependencies ans especially pg
+
+    $ npm install
+create the db in postgres
+
+    -- Database: cpa_auth_provider
+    -- DROP DATABASE cpa_auth_provider;
+
+    CREATE DATABASE cpa_auth_provider
+      WITH OWNER = postgres
+           ENCODING = 'UTF8'
+           TABLESPACE = pg_default
+           LC_COLLATE = 'en_US.utf8'
+           LC_CTYPE = 'en_US.utf8'
+           CONNECTION LIMIT = -1;
+           
+Don't forget to set params in your config.local.js file
+
+    db: {
+        host: '192.168.99.100',
+        port: 32768,
+        user: 'postgres',
+        password: '',
+
+        // The database type, 'mysql', 'sqlite', etc.
+        type: 'postgres',
+        database: 'cpa_auth_provider',
+
+        // Database filename for SQLite.
+        filename: '',
+
+        // If true, SQL statements are logged to the console.
+        debug: true
+    }
+
+
+Set the db
 
     $ NODE_ENV=development bin/init-db
 
