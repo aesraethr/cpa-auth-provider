@@ -23,7 +23,7 @@ var routes = function(app) {
         return;
       }).then(function(){
 
-      if (pairingCodes.length > 0) {
+      if (typeof pairingCodes != 'undefined' && pairingCodes.length > 0) {
         res.render('verify-list.ejs', { 'pairing_codes': pairingCodes });
       }
       else {
