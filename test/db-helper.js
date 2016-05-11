@@ -17,7 +17,11 @@ module.exports = {
     ];
 
     var deleteData = function(table, done) {
-      db.sequelize.query("DELETE from " + table).then(done);
+      db.sequelize.query("DELETE from " + table).then(function(results) {
+        done();
+      }).catch(function (err) {
+        done(err);
+      });
     };
 
     async.eachSeries(tables, deleteData, done);
@@ -26,6 +30,7 @@ module.exports = {
   resetDatabase: function(populateDatabase, done) {
     this.clearDatabase(function(error) {
       if (error) {
+        console.log(error);
         done(error);
       }
       else {
