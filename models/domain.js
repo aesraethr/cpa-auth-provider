@@ -10,15 +10,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     display_name: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
@@ -27,8 +27,8 @@ module.exports = function(sequelize, DataTypes) {
     // /authorized
     access_token: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },

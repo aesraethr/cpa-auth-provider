@@ -13,13 +13,13 @@ var routes = function(router) {
       .find({
         where: { id: clientId, user_id: req.user.id },
         include: [ db.AccessToken ]
-      }).complete(function(err, client) {
-        if (err) {
+      }).catch(function(err, client) {
+
           next(err);
           return;
-        }
+        }).then(function(){
 
-        if (!client) {
+          if (!client) {
           res.sendErrorResponse(404, "not_found", "Unknown client");
           return;
         }
@@ -43,8 +43,10 @@ var routes = function(router) {
             next(err);
           });
 
+        });
+
       });
-  });
+
 };
 
 module.exports = routes;

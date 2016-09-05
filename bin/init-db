@@ -28,24 +28,24 @@ var config = require('../config');
 
 db.sequelize
   .sync({ force: true })
-  .complete(function(err) {
-    if (err) {
+  .catch(function(err) {
+
       console.log('An error occurred while create the table.');
-    }
-    else {
+    }).then(function(){
+
       console.log('Synchronization done.');
 
       if (process.env.NODE_ENV === 'development') {
         db.Domain
           .bulkCreate(config.domains)
-          .success(function() {
+          .then(function() {
             console.log('[SCOPE] Database populated');
 
             if (config.hasOwnProperty('server_clients') &&
                 config.server_clients.length > 0) {
               db.Client
                 .bulkCreate(config.server_clients)
-                .success(function() {
+                .then(function() {
                   console.log('[CLIENT] Database populated');
                 });
             }
@@ -54,5 +54,4 @@ db.sequelize
             }
           });
       }
-    }
   });

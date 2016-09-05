@@ -39,52 +39,52 @@ module.exports = function(router, config) {
 
     db.Domain
       .find({ where: { name: domainName } })
-      .complete(function(err, domain) {
-        if (err) {
+      .catch(function(err, domain) {
           next(err);
           return;
-        }
+        }).then(function(){
 
-        if (!domain) {
-          res.sendInvalidRequest("Unknown domain: " + domainName);
-          return;
-        }
 
-        var query = {
-          token:     accessToken,
-          domain_id: domain.id
-        };
+          if (!domain) {
+            res.sendInvalidRequest("Unknown domain: " + domainName);
+            return;
+          }
 
-        db.AccessToken
-          .find({ where: query, include: [db.User] })
-          .complete(function(err, accessToken) {
-            if (err) {
+          var query = {
+            token:     accessToken,
+            domain_id: domain.id
+          };
+
+          db.AccessToken
+            .find({ where: query, include: [db.User] })
+            .catch(function(err, accessToken) {
               next(err);
               return;
-            }
+            }).then(function(){
 
-            if (!accessToken) {
-              res.sendErrorResponse(404, "not_found", "Unknown access token");
-              return;
-            }
+              if (!accessToken) {
+                res.sendErrorResponse(404, "not_found", "Unknown access token");
+                return;
+              }
 
-            if (accessToken.hasExpired()) {
-              res.sendErrorResponse(404, "not_found", "Access token has expired");
-              return;
-            }
+              if (accessToken.hasExpired()) {
+                res.sendErrorResponse(404, "not_found", "Access token has expired");
+                return;
+              }
 
-            var responseData = {
-              client_id: accessToken.client_id
-            };
+              var responseData = {
+                client_id: accessToken.client_id
+              };
 
-            if (accessToken.user) {
-              responseData.user_id      = accessToken.user.provider_uid;
-              responseData.display_name = accessToken.user.display_name;
-              responseData.photo_url    = accessToken.user.photo_url;
-            }
+              if (accessToken.user) {
+                responseData.user_id      = accessToken.user.provider_uid;
+                responseData.display_name = accessToken.user.display_name;
+                responseData.photo_url    = accessToken.user.photo_url;
+              }
 
-            res.send(responseData);
-          });
-      });
+              res.send(responseData);
+
+            });  
+        });
   });
 };

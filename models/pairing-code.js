@@ -24,8 +24,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ENUM,
       values: ['pending', 'verified', 'denied'],
       defaultValue: 'pending',
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     }

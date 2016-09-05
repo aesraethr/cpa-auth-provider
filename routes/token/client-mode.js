@@ -46,28 +46,33 @@ module.exports = function(req, res, next) {
 
     var findClient = function(callback) {
       db.Client.find({
-        where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
-        include: [ db.User ]
-      })
-      .complete(function(err, client) {
-        if (!client) {
-          res.sendInvalidClient("Unknown client: " + clientId);
-          return;
-        }
-        callback(err, client);
-      });
+            where: { id: clientId, secret: clientSecret, registration_type: 'dynamic' },
+            include: [ db.User ]
+          })
+          .then(function (client) {
+            if (!client) {
+              res.sendInvalidClient("Unknown client: " + clientId);
+              return;
+            }
+            callback(null, client);
+          })
+          .catch(function (err) {
+            callback(err);
+          });
     };
 
     var findDomain = function(client, callback) {
       db.Domain.find({ where: { name: domainName }})
-        .complete(function(err, domain) {
+        .then(function (domain) {
           if (!domain) {
             // SPEC : define correct error message
             res.sendInvalidRequest("Unknown domain: " + domainName);
             return;
           }
 
-          callback(err, client, domain);
+          callback(null, client, domain);
+        }).catch(function(err) {
+          callback(err);
         });
     };
 
@@ -79,10 +84,9 @@ module.exports = function(req, res, next) {
     var deleteAccessToken = function(client, domain, callback) {
       db.sequelize.query(
         "DELETE FROM AccessTokens WHERE client_id=? AND domain_id=?",
-        null, { raw: true }, [ client.id, domain.id ]
-      )
-      .then(function(err) {
-        callback(err, client, domain);
+        { replacements: [ client.id, domain.id ] })
+      .then(function() {
+        callback(null, client, domain);
       },
       function(err) {
         callback(err);
@@ -98,8 +102,11 @@ module.exports = function(req, res, next) {
           client_id: client.id,
           domain_id: domain.id
         })
-        .complete(function(err, accessToken) {
-          callback(err, client, domain, accessToken);
+        .then(function(accessToken) {
+          callback(null, client, domain, accessToken);
+        })
+        .catch(function(err) {
+          callback(err);
         });
     };
 

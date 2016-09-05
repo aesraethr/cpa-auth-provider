@@ -9,45 +9,45 @@ module.exports = function(sequelize, DataTypes) {
     },
     secret: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     software_id: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     software_version: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
     ip: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         isIP: true
       }
     },
     registration_type: {
       type: DataTypes.ENUM,
+      allowNull: false,
       values: ['dynamic', 'static'],
       defaultValue: 'dynamic',
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },

@@ -13,8 +13,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     token: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     }
@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: expiresMixin(config.access_token_lifetime),
 
     associate: function(models) {
-      AccessToken.belongsTo(models.Client);
+      AccessToken.belongsTo(models.Client, {constraints:true});
       AccessToken.belongsTo(models.Domain);
       AccessToken.belongsTo(models.User);
     }
