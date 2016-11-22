@@ -1,6 +1,16 @@
 "use strict";
 
 module.exports = {
+
+  recaptcha: {
+    site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+  },
+  
+  
+  jwtSecret:'bigsecret',
+
+
   identity_providers: {
     facebook: {
       enabled: false
@@ -14,6 +24,10 @@ module.exports = {
     local: {
       enabled: true
     }
+  },
+
+  trackingCookie: {
+    enabled: true
   },
 
   auto_idp_redirect: 'local',

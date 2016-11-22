@@ -7,7 +7,9 @@ module.exports = function(sequelize, DataTypes) {
 
   var User = sequelize.define('User', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    tracking_uid: DataTypes.STRING,
     provider_uid: DataTypes.STRING,
+    email: DataTypes.STRING,
     password: DataTypes.STRING,
     enable_sso: DataTypes.BOOLEAN,
     display_name: DataTypes.STRING,
@@ -27,12 +29,16 @@ module.exports = function(sequelize, DataTypes) {
       },
       verifyPassword: function(password) {
         return bcrypt.compareAsync(password, this.password);
+      },
+      hasChanged: function (displayName, photoUrl) {
+        return (this.display_name !== displayName || this.photo_url !== photoUrl);
       }
     },
     associate: function(models) {
       User.hasMany(models.Client);
       User.hasMany(models.AccessToken);
       User.belongsTo(models.IdentityProvider);
+      User.hasOne(models.UserProfile);
     }
   });
 

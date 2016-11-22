@@ -1,13 +1,44 @@
-'use strict';
+"use strict";
 
 module.exports = {
+
   identity_providers: {
+    // Details : http://passportjs.org/guide/facebook/
+    facebook: {
+      enabled: false,
+      client_id: '',
+      client_secret: '',
+      callback_url: ''
+    },
     github: {
-      enabled: true,
+      enabled: process.env.CPA_GITHUB_CLIENT_ID | false,
       client_id: process.env.CPA_GITHUB_CLIENT_ID,
       client_secret: process.env.CPA_GITHUB_CLIENT_SECRET,
-      callback_url: '/auth/github/callback'
+      callback_url: ''
+    },
+    ebu: {
+      enabled: false
+    },
+    local: {
+      enabled: true
     }
+  },
+
+  trackingCookie: {
+    enabled: true,
+    secret: 'HighWaterTurnsOff',
+    duration: 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
+  },
+
+  recaptcha: {
+    site_key: process.env.RECAPTCHA_SITEKEY,
+    secret_key: process.env.RECAPTCHA_SECRETKEY
+  },
+
+  jwtSecret: process.env.JWT_SECRET,
+  jwt: {
+    audience: 'cpa',
+    issuer: 'cpa'
   },
 
   // When accessing the home page, if defined, users are automatically
@@ -15,18 +46,23 @@ module.exports = {
   auto_idp_redirect: '',
 
   db: {
+    host: '',
+    port: 3306,
+    user: '',
+    password: '',
+
     // The database type, 'mysql', 'sqlite', etc.
     type: 'sqlite',
 
     // Database filename for SQLite.
-    filename: 'data/cpa-auth-provider.sqlite',
+    filename: 'database.sqlite',
 
     // If true, SQL statements are logged to the console.
     debug: true
   },
 
   // Session cookie is signed with this secret to prevent tampering
-  session_secret: 'LKASDMjnr234n90lasndfsadf',
+  session_secret: process.env.SESSION_SECRET,
 
   // Cross-origin resource sharing
   cors: {
@@ -39,18 +75,22 @@ module.exports = {
   // URL path prefix, e.g., '/myapp'
   urlPrefix: '',
 
-  // The end-user verification URL on the authorization server. The URI should
+  // The end-user verification URI on the authorization server. The URI should
   // be short and easy to remember as end-users will be asked to manually type
   // it into their user-agent.
   verification_uri: process.env.CPA_VERIFICATION_URL,
 
-  // Service provider domains to register.
   domains: [
-    {
-      name:         "sp:8002",
-      display_name: "Example Service Provider",
-      access_token: "b4949eba147f4cf88985b43c039cd05b"
-    },
+    //{
+    //  name:         'bbc1-cpa.ebu.io',
+    //  display_name: 'BBC1',
+    //  access_token: 'b4949eba147f4c'
+    //},
+    //{
+    //  name:         'bbc2-cpa.ebu.io',
+    //  display_name: 'BBC2',
+    //  access_token: 'b3dd73435652'
+    //}
   ],
 
   // This option controls how the authorization server responds to requests to
@@ -59,7 +99,15 @@ module.exports = {
   // - true: The user is automatically granted access without confirmation
   auto_provision_tokens: false,
 
-  server_clients : [],
+  server_clients : [{
+    name: '',
+    software_id: '',
+    software_version: '',
+    ip: '127.0.0.1',
+    secret: 'thisismysecret',
+    registration_type: 'static',
+    redirect_uri: ''
+  }],
 
   // The length of time that user (pairing) codes are valid, in seconds.
   pairing_code_lifetime: 60 * 60, // 1 hour
